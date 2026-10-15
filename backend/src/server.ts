@@ -1,6 +1,8 @@
 import app from "./app.js";
 
-app.listen(3000,() => {
-    console.log("Servidor iniciado");
+const PORT = Number(process.env.PORT ?? 3000);
+
+app.listen(PORT, () => {
+     console.log(`Servidor iniciado na porta ${PORT}`);
 });
 
