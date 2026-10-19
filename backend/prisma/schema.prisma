@@ -66,4 +66,46 @@ model Solicitacao{
   //datas
   criadaEm     DateTime @default(now())
   atualizadaEm DateTime @updatedAt
+
+  historicoStatus HistoricoStatus[]
+  anexos Anexo[]
+
+}
+
+model Agente {
+  id        String   @id @default(uuid()) @db.Uuid
+  nome      String
+  email     String   @unique
+  senhaHash String
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now())
+
+  historicoStatus HistoricoStatus[]
+
+}
+
+model HistoricoStatus {
+  id String @id @default(uuid()) @db.Uuid
+  solicitacaoId String @db.Uuid
+  agenteId String @db.Uuid
+  statusAnterior StatusSolicitacao
+  statusNovo StatusSolicitacao
+  observacao String?
+  criadoEm DateTime @default(now())
+
+  solicitacao Solicitacao @relation(fields: [solicitacaoId], references: [id])
+  agente      Agente      @relation(fields: [agenteId], references: [id])
+
+} 
+
+model Anexo {
+  id String @id @default(uuid()) @db.Uuid
+  solicitacaoId String @db.Uuid
+  url String
+  nomeOriginal String?
+  mineType String
+  tamanhoBytes Int
+  criadoEm DateTime @default(now())
+
+  solicitacao Solicitacao @relation(fields: [solicitacaoId], references: [id])
 }
