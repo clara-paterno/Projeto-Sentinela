@@ -3,7 +3,8 @@ import express from "express";
 import healthRoutes from "./routes/health.routes.js";
 import solicitacaoRoutes from "./routes/solicitacao.routes.js";
 import categoriaRoutes from "./routes/categoria.routes.js";
-
+import authRoutes from "./routes/auth.routes.js";
+import gcmRoutes from "./routes/gcm.routes.js"
 import errorHandler from "./middlewares/error.middleware.js";
 import notFoundHandler from "./middlewares/notfound.middleware.js";
 
@@ -14,6 +15,9 @@ app.use(express.json());
 app.use(healthRoutes);
 app.use(categoriaRoutes);
 app.use(solicitacaoRoutes);
+
+app.use(authRoutes);    
+app.use(gcmRoutes);
 
 // Rota inexistente (404)
 app.use(notFoundHandler);
