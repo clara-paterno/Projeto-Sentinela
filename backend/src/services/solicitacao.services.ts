@@ -1,6 +1,13 @@
 import {prisma} from "../lib/prisma.js"
 import type { CriarSolicitacaoInput } from "../schemas/solicitacao.schema.js";
-import { randomBytes, randomUUID, scryptSync } from "node:crypto";
+import type { ConsultarSolicitacaoInput } from "../schemas/consulta.schema.js";
+
+import { 
+  randomBytes, 
+  randomUUID, 
+  scryptSync,         
+  timingSafeEqual
+} from "node:crypto";
 
 
 export async function criarSolicitacaoService(
@@ -56,4 +63,63 @@ const solicitacao = await prisma.solicitacao.create({
   protocolo: solicitacao.protocolo,
   codigoConsulta
 };
+
 }
+
+
+export async function consultarSolicitacaoService(
+  dados: ConsultarSolicitacaoInput
+) {
+  const solicitacao = await prisma.solicitacao.findUnique({
+    where: {
+      protocolo: dados.protocolo
+    },
+    select: {
+      protocolo: true,
+      codigoConsultaHash: true,
+      tipo: true,
+      status: true,
+      descricao: true,
+      criadaEm: true,
+      atualizadaEm: true,
+      categoria: {
+        select: {
+          nome: true
+        }
+      }
+    }
+  });
+
+  if (!solicitacao) {
+    return null;
+  }
+
+  const hashInformado = scryptSync(
+    dados.codigoConsulta.toLowerCase(),
+    dados.protocolo,
+    64
+  );
+
+  const hashArmazenado = Buffer.from(
+    solicitacao.codigoConsultaHash,
+    "hex"
+  );
+
+  if (
+    hashInformado.length !== hashArmazenado.length ||
+    !timingSafeEqual(hashInformado, hashArmazenado)
+  ) {
+    return null;
+  }
+
+  return {
+    protocolo: solicitacao.protocolo,
+    tipo: solicitacao.tipo,
+    categoria: solicitacao.categoria.nome,
+    descricao: solicitacao.descricao,
+    status: solicitacao.status,
+    criadaEm: solicitacao.criadaEm,
+    atualizadaEm: solicitacao.atualizadaEm
+  };
+}
+
