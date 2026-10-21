@@ -5,6 +5,7 @@ import solicitacaoRoutes from "./routes/solicitacao.routes.js";
 import categoriaRoutes from "./routes/categoria.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import gcmRoutes from "./routes/gcm.routes.js"
+import anexoRoutes from "./routes/anexo.routes.js"
 import errorHandler from "./middlewares/error.middleware.js";
 import notFoundHandler from "./middlewares/notfound.middleware.js";
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(healthRoutes);
 app.use(categoriaRoutes);
 app.use(solicitacaoRoutes);
+app.use(anexoRoutes)
 
 app.use(authRoutes);    
 app.use(gcmRoutes);

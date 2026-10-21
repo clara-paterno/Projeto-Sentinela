@@ -25,3 +25,6 @@ Thumbs.db
 
 # Código gerado pelo Prisma
 backend/src/generated/prisma/
+
+# imagem teste
+backend/imagens
