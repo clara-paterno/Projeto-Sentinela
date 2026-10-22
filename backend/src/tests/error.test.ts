@@ -4,18 +4,20 @@ import express from "express";
 import errorHandler from "../middlewares/error.middleware.js";
 
 describe("errorHandler", () => {
-    it("deve retornar status 500 e erro interno do servidor", async () =>{
+  it("deve retornar status 500 para erros internos", async () => {
+    const app = express();
 
-      const app = express();
-
-      app.get('/erro', (_req, _res, next) =>{
-          next(new Error("Erro inesperado"))
-      });
-
-      app.use(errorHandler);
-        
-        const response = await request(app).get("/erro");
-        expect(response.status).toBe(500);
-
+    app.get("/erro", (_req, _res, next) => {
+      next(new Error("Erro inesperado"));
     });
+
+    app.use(errorHandler);
+
+    const response = await request(app).get("/erro");
+
+    expect(response.status).toBe(500);
+    expect(response.body).toEqual({
+      error: "Erro interno do servidor"
+    });
+  });
 });
