@@ -8,8 +8,20 @@ import gcmRoutes from "./routes/gcm.routes.js"
 import anexoRoutes from "./routes/anexo.routes.js"
 import errorHandler from "./middlewares/error.middleware.js";
 import notFoundHandler from "./middlewares/notfound.middleware.js";
+import cors from "cors";
 
 const app = express();
+
+const origensPermitidas = (
+  process.env.CORS_ORIGINS ??
+  "http://localhost:5173"
+).split(",").map(origem => origem.trim());
+
+app.use(cors({
+  origin: origensPermitidas,
+  methods: ["GET", "POST", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 app.use(express.json());
 

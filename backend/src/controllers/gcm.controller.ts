@@ -11,11 +11,51 @@ import {
   detalharSolicitacaoGcmService
 } from "../services/gcm.services.js";
 
+const filtrosGcmSchema = z.object({
+  categoriaId: z.uuid().optional(),
+  status: z.enum([
+    "RECEBIDA",
+    "EM_ANALISE",
+    "EM_ATENDIMENTO",
+    "CONCLUIDA",
+    "ENCERRADA_SEM_ATENDIMENTO"
+  ]).optional(),
+  dataInicio: z.iso.date().optional(),
+  dataFim: z.iso.date().optional()
+}).refine(
+  dados => !dados.dataInicio ||
+    !dados.dataFim ||
+    dados.dataInicio <= dados.dataFim,
+  { message: "Intervalo de datas inválido" }
+);
+
 export async function listarSolicitacoesGcm(
   req: Request,
   res: Response
 ) {
-  const solicitacoes = await listarSolicitacoesGcmService();
+  const validacao = filtrosGcmSchema.safeParse(req.query);
+
+  if (!validacao.success) {
+    res.status(400).json({
+      mensagem: "Filtros inválidos",
+      erros: validacao.error.flatten()
+    });
+    return;
+  }
+
+  const { categoriaId, status, dataInicio, dataFim } =
+    validacao.data;
+
+  const solicitacoes = await listarSolicitacoesGcmService({
+    categoriaId,
+    status,
+    dataInicio: dataInicio
+      ? new Date(`${dataInicio}T00:00:00.000Z`)
+      : undefined,
+    dataFim: dataFim
+      ? new Date(`${dataFim}T23:59:59.999Z`)
+      : undefined
+  });
 
   res.status(200).json(solicitacoes);
 }

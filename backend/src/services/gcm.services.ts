@@ -2,9 +2,39 @@
 import { prisma } from "../lib/prisma.js";
 import type { AtualizarStatusInput } from "../schemas/status.schema.js";
 import type { StatusSolicitacao } from "../generated/prisma/enums.js";
+import type { Prisma } from "../generated/prisma/client.js";
 
-export async function listarSolicitacoesGcmService() {
+export type FiltrosGcm = {
+  categoriaId?: string;
+  status?: "RECEBIDA" | "EM_ANALISE" |
+    "EM_ATENDIMENTO" | "CONCLUIDA" |
+    "ENCERRADA_SEM_ATENDIMENTO";
+  dataInicio?: Date;
+  dataFim?: Date;
+};
+
+export async function listarSolicitacoesGcmService(
+  filtros: FiltrosGcm = {}
+) {
+  const where: Prisma.SolicitacaoWhereInput = {};
+
+  if (filtros.categoriaId) {
+    where.categoriaId = filtros.categoriaId;
+  }
+
+  if (filtros.status) {
+    where.status = filtros.status;
+  }
+
+  if (filtros.dataInicio || filtros.dataFim) {
+    where.criadaEm = {
+      gte: filtros.dataInicio,
+      lte: filtros.dataFim
+    };
+  }
+
   return prisma.solicitacao.findMany({
+    where,
     select: {
       id: true,
       protocolo: true,
