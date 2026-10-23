@@ -17,8 +17,11 @@ import { Ionicons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import ConsultaScreen from "../screens/ConsultaScreen";
 import AjudaScreen from "../screens/AjudaScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import NovaSolicitacaoScreen from "../screens/NovaSolicitacaoScreen";
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -110,31 +113,38 @@ function CustomTabBar({
   );
 }
 
+function AbasNavigator() {
+  return (
+    <Tab.Navigator
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{
+        headerShown: false,
+        sceneStyle: {
+          backgroundColor: "#0B0F19",
+        },
+      }}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Consulta" component={ConsultaScreen} />
+      <Tab.Screen name="Ajuda" component={AjudaScreen} />
+    </Tab.Navigator>
+  );
+}
+
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        tabBar={(props) => <CustomTabBar {...props} />}
-        screenOptions={{
-          headerShown: false,
-          sceneStyle: {
-            backgroundColor: "#0B0F19",
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="Abas"
+          component={AbasNavigator}
         />
-        <Tab.Screen
-          name="Consulta"
-          component={ConsultaScreen}
+
+        <Stack.Screen
+          name="NovaSolicitacao"
+          component={NovaSolicitacaoScreen}
         />
-        <Tab.Screen
-          name="Ajuda"
-          component={AjudaScreen}
-        />
-      </Tab.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
