@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
+import { salvarSolicitacao } from "../storage/solicitacoes";
 
 import {
   buscarCategorias,
@@ -40,11 +41,17 @@ export default function NovaSolicitacaoScreen() {
   const [erroCategorias, setErroCategorias] = useState("");
 
   const [descricao, setDescricao] = useState("");
-  const [enderecoOcorrencia, setEnderecoOcorrencia] = useState("");
+  const [ruaOcorrencia, setRuaOcorrencia] = useState("");
+  const [numeroOcorrencia, setNumeroOcorrencia] = useState("");
+  const [bairroOcorrencia, setBairroOcorrencia] = useState("");
+  const [complementoOcorrencia, setComplementoOcorrencia] = useState("");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [enderecoResidencial, setEnderecoResidencial] = useState("");
+  const [ruaResidencial, setRuaResidencial] = useState("");
+  const [numeroResidencial, setNumeroResidencial] = useState("");
+  const [bairroResidencial, setBairroResidencial] = useState("");
+  const [complementoResidencial, setComplementoResidencial] = useState("");
   const [envolvidoNome, setEnvolvidoNome] = useState("");
   const [envolvidoEndereco, setEnvolvidoEndereco] = useState("");
   const [envolvidoDescricao, setEnvolvidoDescricao] = useState("");
@@ -54,6 +61,7 @@ export default function NovaSolicitacaoScreen() {
   const [resultado, setResultado] = useState<SolicitacaoCriada | null>(null);
   const [estadoUpload, setEstadoUpload] = useState<EstadoUpload>("sem_imagens");
   const [erroUpload, setErroUpload] = useState("");
+  const [avisoStorage, setAvisoStorage] = useState("");
 
   useEffect(() => {
     let ativo = true;
@@ -125,18 +133,26 @@ export default function NovaSolicitacaoScreen() {
     }
   }
 
+  function montarEndereco(rua: string, numero: string, bairro: string, complemento: string) {
+    return [rua.trim(), numero.trim(), bairro.trim(), complemento.trim()]
+      .filter(Boolean)
+      .join(", ");
+  }
+
   async function enviarSolicitacao() {
     if (carregando || resultado) return;
     setErroFormulario("");
 
-    if (!categoriaId || !descricao.trim() || !enderecoOcorrencia.trim()) {
-      setErroFormulario("Informe categoria, descrição e endereço da ocorrência.");
+    if (!categoriaId || !descricao.trim() || !ruaOcorrencia.trim() ||
+        !numeroOcorrencia.trim() || !bairroOcorrencia.trim()) {
+      setErroFormulario("Informe categoria, descrição, rua, número (ou S/N) e bairro da ocorrência.");
       return;
     }
 
     if (!anonima) {
-      if (!nome.trim() || !enderecoResidencial.trim() || (!email.trim() && !telefone.trim())) {
-        setErroFormulario("Informe nome, endereço residencial e pelo menos um contato.");
+      if (!nome.trim() || !ruaResidencial.trim() || !numeroResidencial.trim() ||
+          !bairroResidencial.trim() || (!email.trim() && !telefone.trim())) {
+        setErroFormulario("Informe nome, rua, número (ou S/N), bairro residencial e pelo menos um contato.");
         return;
       }
       if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
@@ -154,12 +170,12 @@ export default function NovaSolicitacaoScreen() {
       categoriaId,
       descricao: descricao.trim(),
       anonima,
-      enderecoOcorrencia: enderecoOcorrencia.trim(),
+      enderecoOcorrencia: montarEndereco(ruaOcorrencia, numeroOcorrencia, bairroOcorrencia, complementoOcorrencia),
     };
 
     if (!anonima) {
       dados.solicitanteNome = nome.trim();
-      dados.solicitanteEnderecoResidencial = enderecoResidencial.trim();
+      dados.solicitanteEnderecoResidencial = montarEndereco(ruaResidencial, numeroResidencial, bairroResidencial, complementoResidencial);
       if (email.trim()) dados.solicitanteEmail = email.trim();
       if (telefone.trim()) dados.solicitanteTelefone = telefone.trim();
     }
@@ -172,6 +188,11 @@ export default function NovaSolicitacaoScreen() {
       // O cadastro acontece UMA ÚNICA VEZ. Guardamos as credenciais imediatamente.
       const criada = await criarSolicitacao(dados);
       setResultado(criada);
+      try {
+        await salvarSolicitacao(criada.protocolo, criada.codigoConsulta);
+      } catch {
+        setAvisoStorage("Não foi possível salvar neste dispositivo. Guarde seu protocolo e código de consulta.");
+      }
 
       if (tipo !== "DENUNCIA" || imagens.length === 0) {
         setEstadoUpload("sem_imagens");
@@ -230,6 +251,7 @@ export default function NovaSolicitacaoScreen() {
           <Text selectable style={styles.codigo}>{resultado.protocolo}</Text>
           <Text style={styles.label}>Código de consulta</Text>
           <Text selectable style={styles.codigo}>{resultado.codigoConsulta}</Text>
+          {!!avisoStorage && <Text style={styles.erro}>{avisoStorage}</Text>}
 
           {estadoUpload === "enviando" && (
             <View style={styles.aviso}>
@@ -344,14 +366,25 @@ export default function NovaSolicitacaoScreen() {
           maxLength={2000}
         />
 
-        <Text style={styles.label}>Endereço da ocorrência *</Text>
-        <TextInput
-          style={styles.input}
-          value={enderecoOcorrencia}
-          onChangeText={setEnderecoOcorrencia}
-          placeholder="Rua, número, bairro e referência"
-          placeholderTextColor="#9AA4B2"
-        />
+        <Text style={styles.subtitulo}>Endereço da ocorrência</Text>
+        <Text style={styles.label}>Rua / Avenida *</Text>
+        <TextInput style={styles.input} value={ruaOcorrencia} onChangeText={setRuaOcorrencia}
+          placeholder="Nome da rua ou avenida" placeholderTextColor="#9AA4B2" />
+        <View style={styles.enderecoLinha}>
+          <View style={styles.enderecoColuna}>
+            <Text style={styles.label}>Número *</Text>
+            <TextInput style={styles.input} value={numeroOcorrencia} onChangeText={setNumeroOcorrencia}
+              placeholder="123 ou S/N" placeholderTextColor="#9AA4B2" />
+          </View>
+          <View style={styles.enderecoColuna}>
+            <Text style={styles.label}>Bairro *</Text>
+            <TextInput style={styles.input} value={bairroOcorrencia} onChangeText={setBairroOcorrencia}
+              placeholder="Bairro" placeholderTextColor="#9AA4B2" />
+          </View>
+        </View>
+        <Text style={styles.label}>Complemento (opcional)</Text>
+        <TextInput style={styles.input} value={complementoOcorrencia} onChangeText={setComplementoOcorrencia}
+          placeholder="Bloco, referência ou ponto próximo" placeholderTextColor="#9AA4B2" />
 
         {tipo === "DENUNCIA" && (
           <View style={styles.anonimatoCard}>
@@ -381,14 +414,25 @@ export default function NovaSolicitacaoScreen() {
               placeholder="Nome completo"
               placeholderTextColor="#9AA4B2"
             />
-            <Text style={styles.label}>Endereço residencial *</Text>
-            <TextInput
-              style={styles.input}
-              value={enderecoResidencial}
-              onChangeText={setEnderecoResidencial}
-              placeholder="Seu endereço"
-              placeholderTextColor="#9AA4B2"
-            />
+        <Text style={styles.subtitulo}>Endereço residencial</Text>
+        <Text style={styles.label}>Rua / Avenida *</Text>
+        <TextInput style={styles.input} value={ruaResidencial} onChangeText={setRuaResidencial}
+          placeholder="Nome da rua ou avenida" placeholderTextColor="#9AA4B2" />
+        <View style={styles.enderecoLinha}>
+          <View style={styles.enderecoColuna}>
+            <Text style={styles.label}>Número *</Text>
+            <TextInput style={styles.input} value={numeroResidencial} onChangeText={setNumeroResidencial}
+              placeholder="123 ou S/N" placeholderTextColor="#9AA4B2" />
+          </View>
+          <View style={styles.enderecoColuna}>
+            <Text style={styles.label}>Bairro *</Text>
+            <TextInput style={styles.input} value={bairroResidencial} onChangeText={setBairroResidencial}
+              placeholder="Bairro" placeholderTextColor="#9AA4B2" />
+          </View>
+        </View>
+        <Text style={styles.label}>Complemento (opcional)</Text>
+        <TextInput style={styles.input} value={complementoResidencial} onChangeText={setComplementoResidencial}
+          placeholder="Bloco, referência ou ponto próximo" placeholderTextColor="#9AA4B2" />
             <Text style={styles.label}>E-mail</Text>
             <TextInput
               style={styles.input}
@@ -511,6 +555,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14, fontSize: 14, marginBottom: 10,
   },
   textArea: { minHeight: 110 },
+  enderecoLinha: { flexDirection: "row", gap: 12 },
+  enderecoColuna: { flex: 1, minWidth: 0 },
   anonimatoCard: {
     backgroundColor: "#171C2B", borderRadius: 16, padding: 16,
     flexDirection: "row", alignItems: "center", gap: 10, marginTop: 18,
