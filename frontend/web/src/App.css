@@ -1,0 +1,335 @@
+
+/* Configurações gerais */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.login-page {
+  display: grid;
+  grid-template-columns: 48% 52%;
+  min-height: 100vh;
+  background: #0b0f19;
+  color: #ffffff;
+}
+
+/* Painel institucional */
+
+.login-institucional {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 52px 64px;
+  background:
+    radial-gradient(
+      circle at 15% 85%,
+      rgba(47, 128, 255, 0.22),
+      transparent 45%
+    ),
+    linear-gradient(145deg, #111d38 0%, #0b0f19 100%);
+  border-right: 1px solid #25314b;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.marca span {
+  letter-spacing: 2px;
+}
+
+.marca-icone {
+  letter-spacing: 0;
+}
+
+.marca-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: #2f80ff;
+  color: #ffffff;
+  font-size: 26px;
+}
+
+/* Conteúdo central da esquerda */
+
+.institucional-conteudo {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.institucional-etiqueta,
+.login-etiqueta {
+  color: #65a3ff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.institucional-conteudo h1 {
+  max-width: 480px;
+  margin: 22px auto;
+  font-size: clamp(34px, 3.5vw, 54px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+}
+
+.institucional-conteudo p {
+  max-width: 460px;
+  margin: 0 auto;
+  color: #a9b9d2;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.institucional-rodape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.institucional-rodape span {
+  color: #9aa4b2;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* Área direita */
+
+.login-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 48px 40px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.login-cabecalho {
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.login-cabecalho h2 {
+  margin: 14px 0 10px;
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  text-align: left;
+}
+
+.login-cabecalho p {
+  margin: 0;
+  color: #9aa4b2;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: left;
+}
+
+/* Formulário */
+
+.login-card form {
+  width: 100%;
+  text-align: left;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 9px;
+  margin-bottom: 21px;
+}
+
+.campo label {
+  display: block;
+  width: 100%;
+  color: #e7ecf5;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.campo input {
+  display: block;
+  width: 100%;
+  height: 46px;
+  min-height: 46px;
+  margin: 0;
+  padding: 11px 14px;
+  background: #171c2b;
+  border: 1px solid #2b3448;
+  border-radius: 10px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo input::placeholder {
+  color: #78859a;
+}
+
+.campo input:focus {
+  border-color: #2f80ff;
+  box-shadow: 0 0 0 3px rgba(47, 128, 255, 0.12);
+}
+
+/* Campo de senha */
+
+.campo-senha {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.campo-senha input {
+  width: 100%;
+  padding-right: 90px;
+}
+
+.mostrar-senha {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  padding: 6px;
+  border: none;
+  background: transparent;
+  color: #65a3ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Botão e mensagens */
+
+.botao-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 12px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #2f80ff;
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.botao-login:hover {
+  background: #1769e8;
+  transform: translateY(-1px);
+}
+
+.botao-login:active {
+  transform: translateY(0);
+}
+
+.mensagem-erro {
+  margin: 0 0 14px;
+  color: #ff9999;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.login-rodape {
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid #253044;
+  color: #78859a;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Responsividade */
+
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-institucional {
+    min-height: 280px;
+    padding: 30px 24px;
+    gap: 30px;
+  }
+
+  .institucional-conteudo h1 {
+    font-size: 32px;
+    margin: 12px auto;
+  }
+
+  .institucional-conteudo p {
+    font-size: 14px;
+  }
+
+  .login-area {
+    padding: 48px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-institucional {
+    min-height: 250px;
+    padding: 24px 20px;
+  }
+
+  .marca {
+    font-size: 16px;
+  }
+
+  .institucional-conteudo h1 {
+    font-size: 27px;
+  }
+
+  .login-cabecalho h2 {
+    font-size: 27px;
+  }
+
+  .login-area {
+    padding: 36px 20px;
+  }
+}
