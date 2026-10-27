@@ -333,3 +333,493 @@
     padding: 36px 20px;
   }
 }
+
+
+/* ========== DASHBOARD GCM ========== */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #0b0f19;
+  color: #ffffff;
+}
+
+.dashboard-header {
+  height: 76px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  background: #101625;
+  border-bottom: 1px solid #25314b;
+}
+
+.dashboard-marca,
+.dashboard-usuario {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-marca {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.dashboard-marca span {
+  letter-spacing: 3px;
+}
+
+.dashboard-marca-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #2f80ff;
+  font-size: 24px;
+  letter-spacing: 0;
+}
+
+.dashboard-usuario-nome {
+  color: #dce6f7;
+  font-size: 14px;
+}
+
+.dashboard-avatar {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #1f3f7a;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.dashboard-corpo {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.dashboard-sidebar {
+  width: 238px;
+  min-height: calc(100vh - 76px);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 22px 14px;
+  background: #101625;
+  border-right: 1px solid #25314b;
+  transition: width 0.2s ease;
+}
+
+.sidebar-recolhida {
+  width: 76px;
+}
+
+.sidebar-topo {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+}
+
+.sidebar-toggle {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #2b3448;
+  border-radius: 10px;
+  background: #171c2b;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.sidebar-navegacao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 15px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #9aa4b2;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-item:hover {
+  background: #171c2b;
+  color: #ffffff;
+}
+
+.sidebar-item-ativo {
+  background: #1f3f7a;
+  color: #ffffff;
+  border-color: #2f80ff;
+}
+
+.sidebar-icone {
+  min-width: 20px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.sidebar-recolhida .sidebar-item {
+  justify-content: center;
+  padding: 12px;
+}
+
+.sidebar-recolhida .sidebar-topo {
+  justify-content: center;
+}
+
+.sidebar-rodape {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.sidebar-sair:hover {
+  color: #ff9999;
+}
+
+.dashboard-conteudo {
+  flex: 1;
+  min-width: 0;
+  padding: 42px 48px;
+  overflow: auto;
+}
+
+.dashboard-conteudo h1 {
+  margin: 0 0 12px;
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+
+.dashboard-conteudo p {
+  margin: 0;
+  color: #9aa4b2;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Responsividade */
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    height: 68px;
+    padding: 0 18px;
+  }
+
+  .dashboard-marca {
+    font-size: 15px;
+  }
+
+  .dashboard-marca-icone {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dashboard-usuario-nome {
+    display: none;
+  }
+
+  .dashboard-sidebar {
+    width: 76px;
+    min-height: calc(100vh - 68px);
+    padding: 18px 8px;
+  }
+
+  .dashboard-sidebar .sidebar-item {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .dashboard-sidebar .sidebar-item > span:not(.sidebar-icone) {
+    display: none;
+  }
+
+  .dashboard-sidebar .sidebar-topo {
+    justify-content: center;
+  }
+
+  .dashboard-conteudo {
+    padding: 28px 20px;
+  }
+}
+
+
+/* ========== PÁGINA GERAL ========== */
+
+.pagina-geral {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.pagina-cabecalho {
+  margin-bottom: 32px;
+}
+
+.pagina-cabecalho h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 750;
+  color: #ffffff;
+}
+
+.pagina-cabecalho p {
+  color: #9aa4b2;
+  font-size: 14px;
+}
+
+/* Indicadores */
+
+.geral-indicadores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 38px;
+}
+
+.indicador-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 125px;
+  padding: 23px 25px;
+  background: #171c2b;
+  border: 1px solid #2b3448;
+  border-radius: 16px;
+}
+
+.indicador-card span {
+  color: #a9b9d2;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.indicador-card strong {
+  margin-top: 15px;
+  color: #ffffff;
+  font-size: 34px;
+  font-weight: 750;
+  line-height: 1.1;
+}
+
+/* Seção de solicitações recentes */
+
+.geral-secao h2 {
+  margin: 0 0 20px;
+  color: #ffffff;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.geral-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* ========== CARD DE SOLICITAÇÃO ========== */
+
+.solicitacao-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  min-height: 225px;
+  padding: 21px;
+  border: 1px solid #2b3448;
+  border-radius: 16px;
+  background: #171c2b;
+  color: #ffffff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.solicitacao-card:hover {
+  border-color: #2f80ff;
+  background: #1a2439;
+  transform: translateY(-2px);
+}
+
+.solicitacao-card:focus-visible {
+  outline: 2px solid #65a3ff;
+  outline-offset: 3px;
+}
+
+.solicitacao-card-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 21px;
+}
+
+.solicitacao-card-tipo {
+  color: #9aa4b2;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Etiqueta de status */
+
+.solicitacao-card-status {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 5px 9px;
+  border: 1px solid #34527d;
+  border-radius: 7px;
+  background: #142746;
+  color: #a9caff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.status-recebida {
+  border-color: #34527d;
+  background: #142746;
+  color: #a9caff;
+}
+
+.status-em_analise {
+  border-color: #77602b;
+  background: #352b18;
+  color: #f4ce80;
+}
+
+.status-em_atendimento {
+  border-color: #286b75;
+  background: #15323a;
+  color: #83dce8;
+}
+
+.status-concluida {
+  border-color: #2c694b;
+  background: #173328;
+  color: #8edbb0;
+}
+
+.status-encerrada_sem_atendimento {
+  border-color: #694351;
+  background: #35232e;
+  color: #eda7b6;
+}
+
+/* Informações do card */
+
+.solicitacao-card-titulo {
+  margin: 0 0 11px;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.solicitacao-card-descricao {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  margin: 0 0 22px !important;
+  color: #9aa4b2;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  overflow-wrap: anywhere;
+}
+
+.solicitacao-card-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid #2b3448;
+  color: #9aa4b2;
+  font-size: 12px;
+}
+
+.solicitacao-card-acao {
+  color: #65a3ff;
+  font-weight: 600;
+}
+
+/* ========== RESPONSIVIDADE ========== */
+
+@media (max-width: 1250px) {
+  .geral-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .geral-indicadores {
+    gap: 12px;
+  }
+
+  .indicador-card {
+    min-height: 110px;
+    padding: 17px;
+  }
+
+  .indicador-card span {
+    font-size: 12px;
+  }
+
+  .indicador-card strong {
+    font-size: 28px;
+  }
+
+  .geral-cards {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .solicitacao-card {
+    min-height: 205px;
+  }
+
+  .pagina-cabecalho {
+    margin-bottom: 25px;
+  }
+}
+
+@media (max-width: 420px) {
+  .geral-indicadores {
+    grid-template-columns: 1fr;
+  }
+}
+

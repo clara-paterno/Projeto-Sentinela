@@ -1,6 +1,11 @@
+import Geral from "./pages/geral";
 import { useState, type FormEvent } from "react";
 import { loginAgente } from "./services/auth";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
 import "./App.css";
+
+type Pagina = "geral" | "solicitacoes";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -9,6 +14,8 @@ function App() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
   const [token, setToken] = useState<string | null>(null);
+
+  const [paginaAtual, setPaginaAtual] = useState<Pagina>("geral");
 
   async function entrar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -25,15 +32,11 @@ function App() {
     setCarregando(true);
 
     try {
-      const resposta = await loginAgente({
-        email,
-        senha,
-      });
+      const resposta = await loginAgente({ email, senha });
 
-      // Por enquanto, o token fica apenas na memória do React.
-      // Não armazenamos credenciais no navegador.
       setToken(resposta.token);
       setSenha("");
+      setPaginaAtual("geral");
     } catch (erro) {
       setErro(
         erro instanceof Error
@@ -45,54 +48,51 @@ function App() {
     }
   }
 
-  // Tela temporária para confirmar a autenticação.
-  // Depois será substituída pelo dashboard da GCM.
+  function sair() {
+    setToken(null);
+    setEmail("");
+    setSenha("");
+    setErro("");
+    setMostrarSenha(false);
+    setPaginaAtual("geral");
+  }
+
+  // Área protegida: só aparece após autenticação.
   if (token) {
     return (
-      <main className="login-page">
-        <section
-          className="login-area"
-          style={{
-            gridColumn: "1 / -1",
-            minHeight: "100vh",
-            textAlign: "center",
-          }}
-        >
-          <div className="login-card">
-            <span className="login-etiqueta">ACESSO AUTORIZADO</span>
+      <div className="dashboard">
+        <Header />
 
-            <h1
-              style={{
-                marginTop: 20,
-                marginBottom: 16,
-                fontSize: 32,
-                fontWeight: 700,
-                lineHeight: 1.3,
-                letterSpacing: "-0.5px",
-              }}
-            >
-              Bem-vindo ao Sentinela GCM!
-            </h1>
-            <p style={{ color: "#9AA4B2", marginTop: 16 }}>
-              Autenticação realizada com sucesso.
-            </p>
+        <div className="dashboard-corpo">
+          <Sidebar
+            paginaAtual={paginaAtual}
+            onNavegar={setPaginaAtual}
+            onSair={sair}
+          />
 
-            <button
-              className="botao-login"
-              type="button"
-              onClick={() => {
-                setToken(null);
-                setEmail("");
-              }}
-            >
-              Sair
-            </button>
-          </div>
-        </section>
-      </main>
+          <main className="dashboard-conteudo">
+            {paginaAtual === "geral" ? (
+              <Geral
+                token={token}
+                onAbrirSolicitacao={(id) => {
+                  console.log("Solicitação selecionada:", id);
+                }}
+              />
+            ) : (
+              <section>
+                <h1>Solicitações</h1>
+                <p>
+                  Consulte e gerencie as denúncias e ocorrências registradas.
+                </p>
+              </section>
+            )}
+          </main>
+        </div>
+      </div>
     );
   }
 
+  // Tela de login
   return (
     <main className="login-page">
       <section className="login-institucional">
