@@ -4,55 +4,85 @@ import type { AtualizarStatusInput } from "../schemas/status.schema.js";
 import type { StatusSolicitacao } from "../generated/prisma/enums.js";
 import type { Prisma } from "../generated/prisma/client.js";
 
+
 export type FiltrosGcm = {
   categoriaId?: string;
-  status?: "RECEBIDA" | "EM_ANALISE" |
-    "EM_ATENDIMENTO" | "CONCLUIDA" |
-    "ENCERRADA_SEM_ATENDIMENTO";
+  tipo?: "DENUNCIA" | "OCORRENCIA";
+  status?: StatusSolicitacao[];
   dataInicio?: Date;
   dataFim?: Date;
+  pagina?: number;
+  limite?: number;
 };
 
 export async function listarSolicitacoesGcmService(
   filtros: FiltrosGcm = {}
 ) {
+  const pagina = filtros.pagina ?? 1;
+  const limite = filtros.limite ?? 10;
+
   const where: Prisma.SolicitacaoWhereInput = {};
 
   if (filtros.categoriaId) {
     where.categoriaId = filtros.categoriaId;
   }
 
-  if (filtros.status) {
-    where.status = filtros.status;
+  if (filtros.tipo) {
+    where.tipo = filtros.tipo;
   }
+
+  if (filtros.status && filtros.status.length > 0) {
+  where.status = {
+    in: filtros.status,
+  };
+}
 
   if (filtros.dataInicio || filtros.dataFim) {
     where.criadaEm = {
       gte: filtros.dataInicio,
-      lte: filtros.dataFim
+      lte: filtros.dataFim,
     };
   }
 
-  return prisma.solicitacao.findMany({
-    where,
-    select: {
-      id: true,
-      protocolo: true,
-      tipo: true,
-      status: true,
-      anonima: true,
-      descricao: true,
-      criadaEm: true,
-      categoria: {
-        select: {
-          nome: true
-        }
-      }
+  const [solicitacoes, total] = await prisma.$transaction([
+    prisma.solicitacao.findMany({
+      where,
+      select: {
+        id: true,
+        protocolo: true,
+        tipo: true,
+        status: true,
+        anonima: true,
+        descricao: true,
+        criadaEm: true,
+        categoria: {
+          select: {
+            nome: true,
+          },
+        },
+      },
+      orderBy: [
+        { criadaEm: "desc" },
+        { id: "desc" },
+      ],
+      skip: (pagina - 1) * limite,
+      take: limite,
+    }),
+
+    prisma.solicitacao.count({
+      where,
+    }),
+  ]);
+
+  return {
+    solicitacoes,
+    paginacao: {
+      pagina,
+      limite,
+      total,
+      totalPaginas: Math.ceil(total / limite),
     },
-    orderBy: {
-      criadaEm: "desc"
-    }
-  });
+  };
 }
 
 export async function detalharSolicitacaoGcmService(
