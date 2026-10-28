@@ -1,45 +1,124 @@
 
 import { useEffect, useState } from "react";
 import SolicitacaoCard from "../components/SolicitacaoCard";
+
 import {
   buscarSolicitacoes,
   type SolicitacaoGCM,
+  type StatusSolicitacao,
 } from "../services/solicitacoes";
+
+export type GrupoSituacao = "aberto" | "andamento" | "encerrado";
+
+const STATUS_POR_GRUPO: Record<
+  GrupoSituacao,
+  StatusSolicitacao[]
+> = {
+  aberto: ["RECEBIDA"],
+  andamento: ["EM_ANALISE", "EM_ATENDIMENTO"],
+  encerrado: ["CONCLUIDA", "ENCERRADA_SEM_ATENDIMENTO"],
+};
 
 type GeralProps = {
   token: string;
   onAbrirSolicitacao: (id: string) => void;
+  onFiltrarSituacao: (grupo: GrupoSituacao) => void;
 };
+
+type Indicadores = {
+  aberto: number;
+  andamento: number;
+  encerrado: number;
+};
+
+const indicadoresConfig: {
+  grupo: GrupoSituacao;
+  titulo: string;
+  descricao: string;
+}[] = [
+  {
+    grupo: "aberto",
+    titulo: "Em aberto",
+    descricao: "Aguardando análise",
+  },
+  {
+    grupo: "andamento",
+    titulo: "Em andamento",
+    descricao: "Em análise ou atendimento",
+  },
+  {
+    grupo: "encerrado",
+    titulo: "Encerrados",
+    descricao: "Atendimentos finalizados",
+  },
+];
 
 export default function Geral({
   token,
   onAbrirSolicitacao,
+  onFiltrarSituacao,
 }: GeralProps) {
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoGCM[]>([]);
+  const [indicadores, setIndicadores] = useState<Indicadores>({
+    aberto: 0,
+    andamento: 0,
+    encerrado: 0,
+  });
+
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
 
   useEffect(() => {
     let ativo = true;
 
-    async function carregarSolicitacoes() {
+    async function carregarDados() {
       setCarregando(true);
       setErro("");
 
       try {
-        const dados = await buscarSolicitacoes(token);
+        const [recentes, abertas, andamento, encerradas] =
+          await Promise.all([
+            buscarSolicitacoes(token, {
+              pagina: 1,
+              limite: 6,
+            }),
 
-        if (ativo) {
-          setSolicitacoes(dados);
-        }
+            buscarSolicitacoes(token, {
+              status: STATUS_POR_GRUPO.aberto,
+              pagina: 1,
+              limite: 1,
+            }),
+
+            buscarSolicitacoes(token, {
+              status: STATUS_POR_GRUPO.andamento,
+              pagina: 1,
+              limite: 1,
+            }),
+
+            buscarSolicitacoes(token, {
+              status: STATUS_POR_GRUPO.encerrado,
+              pagina: 1,
+              limite: 1,
+            }),
+          ]);
+
+        if (!ativo) return;
+
+        setSolicitacoes(recentes.solicitacoes);
+
+        setIndicadores({
+          aberto: abertas.paginacao.total,
+          andamento: andamento.paginacao.total,
+          encerrado: encerradas.paginacao.total,
+        });
       } catch (erro) {
-        if (ativo) {
-          setErro(
-            erro instanceof Error
-              ? erro.message
-              : "Não foi possível carregar as solicitações."
-          );
-        }
+        if (!ativo) return;
+
+        setErro(
+          erro instanceof Error
+            ? erro.message
+            : "Não foi possível carregar o dashboard."
+        );
       } finally {
         if (ativo) {
           setCarregando(false);
@@ -47,36 +126,18 @@ export default function Geral({
       }
     }
 
-    void carregarSolicitacoes();
+    void carregarDados();
 
     return () => {
       ativo = false;
     };
   }, [token]);
 
-  const recentes = [...solicitacoes]
-    .sort(
-      (a, b) =>
-        new Date(b.criadaEm).getTime() -
-        new Date(a.criadaEm).getTime()
-    )
-    .slice(0, 6);
-
-  const aguardandoAnalise = solicitacoes.filter(
-    (solicitacao) => solicitacao.status === "RECEBIDA"
-  ).length;
-
-  const emAtendimento = solicitacoes.filter(
-    (solicitacao) => solicitacao.status === "EM_ATENDIMENTO"
-  ).length;
-
   return (
     <section className="pagina-geral">
       <div className="pagina-cabecalho">
         <h1>Visão geral</h1>
-        <p>
-          Acompanhe as solicitações recentes da comunidade.
-        </p>
+        <p>Acompanhe as solicitações recentes da comunidade.</p>
       </div>
 
       {carregando ? (
@@ -88,25 +149,34 @@ export default function Geral({
       ) : (
         <>
           <div className="geral-indicadores">
-            <div className="indicador-card">
-              <span>Aguardando análise</span>
-              <strong>{aguardandoAnalise}</strong>
-            </div>
+            {indicadoresConfig.map((indicador) => (
+              <button
+                key={indicador.grupo}
+                type="button"
+                className={`indicador-card indicador-${indicador.grupo}`}
+                onClick={() => onFiltrarSituacao(indicador.grupo)}
+                title={`Ver solicitações: ${indicador.titulo}`}
+              >
+                <div className="indicador-topo">
+                  <span>{indicador.titulo}</span>
+                  <span aria-hidden="true">↗</span>
+                </div>
 
-            <div className="indicador-card">
-              <span>Em atendimento</span>
-              <strong>{emAtendimento}</strong>
-            </div>
+                <strong>{indicadores[indicador.grupo]}</strong>
+
+                <small>{indicador.descricao}</small>
+              </button>
+            ))}
           </div>
 
           <div className="geral-secao">
             <h2>Solicitações recentes</h2>
 
-            {recentes.length === 0 ? (
+            {solicitacoes.length === 0 ? (
               <p>Nenhuma solicitação cadastrada.</p>
             ) : (
               <div className="geral-cards">
-                {recentes.map((solicitacao) => (
+                {solicitacoes.map((solicitacao) => (
                   <SolicitacaoCard
                     key={solicitacao.id}
                     solicitacao={solicitacao}

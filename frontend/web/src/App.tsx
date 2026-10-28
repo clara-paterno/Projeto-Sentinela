@@ -1,4 +1,5 @@
-import Geral from "./pages/geral";
+import Geral, { type GrupoSituacao } from "./pages/geral";
+import Solicitacoes from "./pages/Solicitacoes";
 import { useState, type FormEvent } from "react";
 import { loginAgente } from "./services/auth";
 import Header from "./components/Header";
@@ -16,6 +17,8 @@ function App() {
   const [token, setToken] = useState<string | null>(null);
 
   const [paginaAtual, setPaginaAtual] = useState<Pagina>("geral");
+  const [situacaoSelecionada, setSituacaoSelecionada] =
+    useState<GrupoSituacao | null>(null);
 
   async function entrar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -57,6 +60,16 @@ function App() {
     setPaginaAtual("geral");
   }
 
+  function filtrarPorSituacao(grupo: GrupoSituacao) {
+    setSituacaoSelecionada(grupo);
+    setPaginaAtual("solicitacoes");
+  }
+
+  function navegar(pagina: Pagina) {
+    setSituacaoSelecionada(null);
+    setPaginaAtual(pagina);
+  }
+
   // Área protegida: só aparece após autenticação.
   if (token) {
     return (
@@ -66,7 +79,7 @@ function App() {
         <div className="dashboard-corpo">
           <Sidebar
             paginaAtual={paginaAtual}
-            onNavegar={setPaginaAtual}
+            onNavegar={navegar}
             onSair={sair}
           />
 
@@ -74,17 +87,19 @@ function App() {
             {paginaAtual === "geral" ? (
               <Geral
                 token={token}
-                onAbrirSolicitacao={(id) => {
+                onAbrirSolicitacao={(id: string) => {
+                  console.log("Solicitação selecionada:", id);
+                }}
+                onFiltrarSituacao={filtrarPorSituacao}
+              />
+            ) : (
+              <Solicitacoes
+                token={token}
+                situacaoInicial={situacaoSelecionada}
+                onAbrirSolicitacao={(id: string) => {
                   console.log("Solicitação selecionada:", id);
                 }}
               />
-            ) : (
-              <section>
-                <h1>Solicitações</h1>
-                <p>
-                  Consulte e gerencie as denúncias e ocorrências registradas.
-                </p>
-              </section>
             )}
           </main>
         </div>
