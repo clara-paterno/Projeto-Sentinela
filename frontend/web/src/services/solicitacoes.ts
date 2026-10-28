@@ -25,6 +25,48 @@ export type SolicitacaoGCM = {
   };
 };
 
+
+export type SolicitacaoDetalhada = SolicitacaoGCM & {
+  latitude: number | null;
+  longitude: number | null;
+  enderecoOcorrencia: string | null;
+
+  solicitanteNome: string | null;
+  solicitanteEmail: string | null;
+  solicitanteTelefone: string | null;
+  solicitanteEnderecoResidencial: string | null;
+
+  envolvidoNome: string | null;
+  envolvidoEndereco: string | null;
+  envolvidoDescricao: string | null;
+
+  atualizadaEm: string;
+
+  categoria: {
+    id: string;
+    nome: string;
+    tipo: TipoSolicitacao;
+  };
+
+  anexos: {
+    id: string;
+    nomeOriginal: string;
+    url: string;
+    mineType: string;
+    tamanhoBytes: number;
+  }[];
+
+  historicoStatus: {
+    statusAnterior: StatusSolicitacao;
+    statusNovo: StatusSolicitacao;
+    observacao: string | null;
+    criadoEm: string;
+    agente: {
+      nome: string;
+    };
+  }[];
+};
+
 export type FiltrosSolicitacoes = {
   categoriaId?: string;
   tipo?: TipoSolicitacao;
@@ -98,4 +140,63 @@ export async function buscarSolicitacoes(
   }
 
   return dados as RespostaSolicitacoes;
+}
+
+
+export async function buscarSolicitacaoPorId(
+  token: string,
+  id: string
+): Promise<SolicitacaoDetalhada> {
+  let resposta: Response;
+
+  try {
+    resposta = await fetch(
+      `${API_URL}/gcm/solicitacoes/${encodeURIComponent(id)}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  } catch {
+    throw new Error(
+      "Não foi possível conectar ao servidor."
+    );
+  }
+
+  if (resposta.status === 401 || resposta.status === 403) {
+    throw new Error(
+      "Sua sessão expirou ou não é válida. Faça login novamente."
+    );
+  }
+
+  if (resposta.status === 404) {
+    throw new Error("Solicitação não encontrada.");
+  }
+
+  if (!resposta.ok) {
+    throw new Error(
+      "Não foi possível carregar os detalhes da solicitação."
+    );
+  }
+
+  const dados: unknown = await resposta.json();
+
+  if (
+    typeof dados !== "object" ||
+    dados === null ||
+    !("id" in dados) ||
+    typeof dados.id !== "string" ||
+    !("historicoStatus" in dados) ||
+    !Array.isArray(dados.historicoStatus) ||
+    !("anexos" in dados) ||
+    !Array.isArray(dados.anexos)
+  ) {
+    throw new Error(
+      "O servidor retornou detalhes em formato inesperado."
+    );
+  }
+
+  return dados as SolicitacaoDetalhada;
 }
