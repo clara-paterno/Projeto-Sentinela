@@ -823,3 +823,287 @@
   }
 }
 
+
+/* ==========================================
+   SENTINELA GCM — INDICADORES E FILTROS
+   ========================================== */
+
+/* Indicadores da página Geral */
+
+.geral-indicadores {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.indicador-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 155px;
+  padding: 22px 24px;
+  align-items: stretch;
+  text-align: left;
+  font: inherit;
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.indicador-card:hover {
+  background: #1a2439;
+  border-color: #2f80ff;
+  transform: translateY(-2px);
+}
+
+.indicador-card:focus-visible {
+  outline: 2px solid #65a3ff;
+  outline-offset: 3px;
+}
+
+.indicador-card:active {
+  transform: translateY(0);
+}
+
+.indicador-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.indicador-topo span:first-child {
+  color: #a9b9d2;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.indicador-topo span:last-child {
+  color: #65a3ff;
+  font-size: 19px;
+  line-height: 1;
+}
+
+.indicador-card strong {
+  display: block;
+  margin-top: 16px;
+  color: #ffffff;
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 750;
+}
+
+.indicador-card small {
+  display: block;
+  margin-top: 12px;
+  color: #788ba8;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.indicador-aberto {
+  border-top: 3px solid #65a3ff;
+}
+
+.indicador-andamento {
+  border-top: 3px solid #f4ce80;
+}
+
+.indicador-encerrado {
+  border-top: 3px solid #8edbb0;
+}
+
+/* ==========================================
+   PÁGINA SOLICITAÇÕES
+   ========================================== */
+
+.pagina-solicitacoes {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.filtros-solicitacoes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 18px;
+  margin-bottom: 28px;
+  padding: 24px;
+  background: #171c2b;
+  border: 1px solid #2b3448;
+  border-radius: 18px;
+}
+
+.filtros-solicitacoes > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 9px;
+}
+
+.filtros-solicitacoes label {
+  color: #dce6f7;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.filtros-solicitacoes select,
+.filtros-solicitacoes input {
+  width: 100%;
+  height: 44px;
+  min-width: 0;
+  padding: 10px 13px;
+  border: 1px solid #334057;
+  border-radius: 10px;
+  background: #0b0f19;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  outline: none;
+  color-scheme: dark;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.filtros-solicitacoes select {
+  cursor: pointer;
+}
+
+.filtros-solicitacoes input:focus,
+.filtros-solicitacoes select:focus {
+  border-color: #2f80ff;
+  box-shadow: 0 0 0 3px rgba(47, 128, 255, 0.12);
+}
+
+.filtros-solicitacoes select:disabled,
+.filtros-solicitacoes input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.filtros-solicitacoes input::placeholder {
+  color: #78859a;
+}
+
+.filtros-solicitacoes small {
+  color: #9aa4b2;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.filtros-solicitacoes button {
+  height: 44px;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid #37547c;
+  border-radius: 10px;
+  color: #8eb8ff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.filtros-solicitacoes button:hover {
+  background: #1f3f7a;
+  border-color: #2f80ff;
+  color: #ffffff;
+}
+
+.filtros-solicitacoes button:focus-visible {
+  outline: 2px solid #65a3ff;
+  outline-offset: 3px;
+}
+
+/* Quantidade de resultados */
+
+.solicitacoes-total {
+  margin: 0 0 20px !important;
+  color: #a9b9d2 !important;
+  font-size: 13px !important;
+}
+
+/* Paginação */
+
+.solicitacoes-paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 32px;
+  padding-bottom: 24px;
+}
+
+.solicitacoes-paginacao span {
+  color: #a9b9d2;
+  font-size: 13px;
+}
+
+.solicitacoes-paginacao button {
+  min-height: 40px;
+  padding: 10px 17px;
+  background: #171c2b;
+  border: 1px solid #2b3448;
+  border-radius: 10px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.solicitacoes-paginacao button:hover:not(:disabled) {
+  background: #1f3f7a;
+  border-color: #2f80ff;
+}
+
+.solicitacoes-paginacao button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   RESPONSIVIDADE
+   ========================================== */
+
+@media (max-width: 1100px) {
+  .filtros-solicitacoes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 850px) {
+  .geral-indicadores {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .geral-indicadores {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .indicador-card {
+    min-height: 135px;
+    padding: 18px;
+  }
+
+  .filtros-solicitacoes {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 18px;
+  }
+
+  .solicitacoes-paginacao {
+    gap: 12px;
+  }
+}
