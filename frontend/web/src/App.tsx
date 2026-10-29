@@ -1,5 +1,6 @@
 import Geral, { type GrupoSituacao } from "./pages/geral";
 import Solicitacoes from "./pages/Solicitacoes";
+import Detalhes from "./pages/Detalhes";
 import { useState, type FormEvent } from "react";
 import { loginAgente } from "./services/auth";
 import Header from "./components/Header";
@@ -19,6 +20,9 @@ function App() {
   const [paginaAtual, setPaginaAtual] = useState<Pagina>("geral");
   const [situacaoSelecionada, setSituacaoSelecionada] =
     useState<GrupoSituacao | null>(null);
+  const [solicitacaoSelecionada, setSolicitacaoSelecionada] = useState<
+    string | null
+  >(null);
 
   async function entrar(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -57,6 +61,7 @@ function App() {
     setSenha("");
     setErro("");
     setMostrarSenha(false);
+    setSolicitacaoSelecionada(null);
     setPaginaAtual("geral");
   }
 
@@ -66,8 +71,17 @@ function App() {
   }
 
   function navegar(pagina: Pagina) {
-    setSituacaoSelecionada(null);
-    setPaginaAtual(pagina);
+  setSolicitacaoSelecionada(null);
+  setSituacaoSelecionada(null);
+  setPaginaAtual(pagina);
+} 
+
+  function abrirSolicitacao(id: string) {
+    setSolicitacaoSelecionada(id);
+  }
+
+  function voltarSolicitacao() {
+    setSolicitacaoSelecionada(null);
   }
 
   // Área protegida: só aparece após autenticação.
@@ -84,21 +98,23 @@ function App() {
           />
 
           <main className="dashboard-conteudo">
-            {paginaAtual === "geral" ? (
+            {solicitacaoSelecionada ? (
+              <Detalhes
+                token={token}
+                id={solicitacaoSelecionada}
+                onVoltar={voltarSolicitacao}
+              />
+            ) : paginaAtual === "geral" ? (
               <Geral
                 token={token}
-                onAbrirSolicitacao={(id: string) => {
-                  console.log("Solicitação selecionada:", id);
-                }}
+                onAbrirSolicitacao={abrirSolicitacao}
                 onFiltrarSituacao={filtrarPorSituacao}
               />
             ) : (
               <Solicitacoes
                 token={token}
                 situacaoInicial={situacaoSelecionada}
-                onAbrirSolicitacao={(id: string) => {
-                  console.log("Solicitação selecionada:", id);
-                }}
+                onAbrirSolicitacao={abrirSolicitacao}
               />
             )}
           </main>
