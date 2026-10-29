@@ -33,10 +33,7 @@ export type SolicitacaoCriada = {
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-async function request<T>(
-  caminho: string,
-  options?: RequestInit
-): Promise<T> {
+async function request<T>(caminho: string, options?: RequestInit): Promise<T> {
   if (!API_URL) {
     throw new Error("Configure EXPO_PUBLIC_API_URL no .env");
   }
@@ -52,9 +49,7 @@ async function request<T>(
       },
     });
   } catch {
-    throw new Error(
-      "Não foi possível conectar ao servidor. Verifique a rede."
-    );
+    throw new Error("Não foi possível conectar ao servidor. Verifique a rede.");
   }
 
   const data: unknown = await response.json().catch(() => null);
@@ -103,24 +98,30 @@ export type SolicitacaoConsultada = {
     | "ENCERRADA_SEM_ATENDIMENTO";
   criadaEm: string;
   atualizadaEm: string;
+
+  historicoStatus?: {
+    statusNovo:
+      | "RECEBIDA"
+      | "EM_ANALISE"
+      | "EM_ATENDIMENTO"
+      | "CONCLUIDA"
+      | "ENCERRADA_SEM_ATENDIMENTO";
+    observacao: string | null;
+    criadoEm: string;
+  }[];
 };
 
-export function consultarSolicitacao(
-  dados: ConsultaSolicitacaoInput
-) {
-  return request<SolicitacaoConsultada>(
-    "/solicitacoes/consulta",
-    {
-      method: "POST",
-      body: JSON.stringify(dados),
-    }
-  );
+export function consultarSolicitacao(dados: ConsultaSolicitacaoInput) {
+  return request<SolicitacaoConsultada>("/solicitacoes/consulta", {
+    method: "POST",
+    body: JSON.stringify(dados),
+  });
 }
 
 export async function enviarAnexos(
   protocolo: string,
   codigoConsulta: string,
-  imagens: ImagePickerAsset[]
+  imagens: ImagePickerAsset[],
 ): Promise<void> {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -145,17 +146,15 @@ export async function enviarAnexos(
       throw new Error("Formato de imagem não permitido.");
     }
 
-    if (imagem.fileSize !== undefined &&
-        imagem.fileSize > 5 * 1024 * 1024) {
+    if (imagem.fileSize !== undefined && imagem.fileSize > 5 * 1024 * 1024) {
       throw new Error("Uma imagem ultrapassa o limite de 5 MB.");
     }
 
-    const nome = imagem.fileName ||
-      `imagem-${i + 1}.${tipo === "image/png"
-        ? "png"
-        : tipo === "image/webp"
-          ? "webp"
-          : "jpg"}`;
+    const nome =
+      imagem.fileName ||
+      `imagem-${i + 1}.${
+        tipo === "image/png" ? "png" : tipo === "image/webp" ? "webp" : "jpg"
+      }`;
 
     if (Platform.OS === "web") {
       if (!imagem.file) {
@@ -175,13 +174,10 @@ export async function enviarAnexos(
   let response: Response;
 
   try {
-    response = await fetch(
-      `${API_URL}/solicitacoes/anexos`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    response = await fetch(`${API_URL}/solicitacoes/anexos`, {
+      method: "POST",
+      body: formData,
+    });
   } catch {
     throw new Error("Falha de conexão durante o upload.");
   }
@@ -190,9 +186,7 @@ export async function enviarAnexos(
     const dados = await response.json().catch(() => null);
 
     throw new Error(
-      dados?.mensagem ??
-      `Falha no upload (HTTP ${response.status}).`
+      dados?.mensagem ?? `Falha no upload (HTTP ${response.status}).`,
     );
   }
 }
-

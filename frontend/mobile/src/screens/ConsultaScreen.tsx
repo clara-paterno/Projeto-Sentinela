@@ -34,9 +34,13 @@ export default function ConsultaScreen() {
   const [codigoConsulta, setCodigoConsulta] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const [resultado, setResultado] = useState<SolicitacaoConsultada | null>(null);
+  const [resultado, setResultado] = useState<SolicitacaoConsultada | null>(
+    null,
+  );
 
-  const [solicitacoesSalvas, setSolicitacoesSalvas] = useState<SolicitacaoSalva[]>([]);
+  const [solicitacoesSalvas, setSolicitacoesSalvas] = useState<
+    SolicitacaoSalva[]
+  >([]);
   const [carregandoSalvas, setCarregandoSalvas] = useState(true);
   const [erroSalvas, setErroSalvas] = useState("");
 
@@ -73,12 +77,12 @@ export default function ConsultaScreen() {
       return () => {
         ativo = false;
       };
-    }, [])
+    }, []),
   );
 
   async function consultarComCredenciais(
     protocoloInformado: string,
-    codigoInformado: string
+    codigoInformado: string,
   ) {
     if (carregando) return;
 
@@ -111,7 +115,7 @@ export default function ConsultaScreen() {
       setErro(
         error instanceof Error
           ? error.message
-          : "Não foi possível consultar a solicitação."
+          : "Não foi possível consultar a solicitação.",
       );
     } finally {
       setCarregando(false);
@@ -172,7 +176,8 @@ export default function ConsultaScreen() {
                       {salva.protocolo}
                     </Text>
                     <Text style={styles.dataSalva}>
-                      Salva em {new Date(salva.salvaEm).toLocaleDateString("pt-BR")}
+                      Salva em{" "}
+                      {new Date(salva.salvaEm).toLocaleDateString("pt-BR")}
                     </Text>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color="#2F80FF" />
@@ -232,7 +237,9 @@ export default function ConsultaScreen() {
 
           <TouchableOpacity
             style={[styles.botao, carregando && styles.botaoDesabilitado]}
-            onPress={() => void consultarComCredenciais(protocolo, codigoConsulta)}
+            onPress={() =>
+              void consultarComCredenciais(protocolo, codigoConsulta)
+            }
             disabled={carregando}
           >
             {carregando ? (
@@ -250,7 +257,11 @@ export default function ConsultaScreen() {
           <View style={styles.resultadoCard}>
             <Text style={styles.resultadoTitulo}>Sua solicitação</Text>
             <View style={styles.statusCard}>
-              <Ionicons name="information-circle-outline" size={22} color="#2F80FF" />
+              <Ionicons
+                name="information-circle-outline"
+                size={22}
+                color="#2F80FF"
+              />
               <View style={{ flex: 1 }}>
                 <Text style={styles.dica}>Status atual</Text>
                 <Text style={styles.statusTexto}>
@@ -275,6 +286,51 @@ export default function ConsultaScreen() {
             <Text style={styles.valor}>
               {new Date(resultado.atualizadaEm).toLocaleString("pt-BR")}
             </Text>
+
+            {resultado.historicoStatus &&
+              resultado.historicoStatus.length > 0 && (
+                <View style={styles.historicoContainer}>
+                  <View style={styles.historicoCabecalho}>
+                    <Ionicons name="time-outline" size={22} color="#2F80FF" />
+                    <Text style={styles.historicoTitulo}>
+                      Histórico de acompanhamento
+                    </Text>
+                  </View>
+
+                  {resultado.historicoStatus.map((item, index) => (
+                    <View
+                      key={`${item.criadoEm}-${index}`}
+                      style={styles.historicoItem}
+                    >
+                      <View style={styles.historicoLinha}>
+                        <View style={styles.historicoPonto} />
+
+                        <View style={styles.historicoConteudo}>
+                          <Text style={styles.historicoStatus}>
+                            {statusLabels[item.statusNovo] ?? item.statusNovo}
+                          </Text>
+
+                          <Text style={styles.historicoData}>
+                            {new Date(item.criadoEm).toLocaleString("pt-BR")}
+                          </Text>
+
+                          {item.observacao?.trim() && (
+                            <View style={styles.observacaoCard}>
+                              <Text style={styles.observacaoTitulo}>
+                                Observação da GCM
+                              </Text>
+
+                              <Text style={styles.observacaoTexto}>
+                                {item.observacao}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
           </View>
         )}
       </ScrollView>
@@ -290,42 +346,172 @@ const styles = StyleSheet.create({
   subtitulo: { color: "#9AA4B2", fontSize: 14, lineHeight: 22 },
   card: { backgroundColor: "#171C2B", borderRadius: 24, padding: 20 },
   cardManual: { marginTop: 20 },
-  tituloLinha: { flexDirection: "row", alignItems: "center", gap: 9, marginBottom: 12 },
+  tituloLinha: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+    marginBottom: 12,
+  },
   listaSalvas: { gap: 10 },
   solicitacaoSalva: {
-    flexDirection: "row", alignItems: "center", justifyContent: "space-between",
-    backgroundColor: "#1D2333", borderRadius: 14, borderWidth: 1,
-    borderColor: "#2B3448", padding: 14, gap: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#1D2333",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#2B3448",
+    padding: 14,
+    gap: 10,
   },
   registroInfo: { flex: 1, gap: 5 },
   protocoloSalvo: { color: "#FFFFFF", fontSize: 12, fontWeight: "600" },
   dataSalva: { color: "#9AA4B2", fontSize: 11 },
-  label: { color: "#FFFFFF", fontSize: 14, fontWeight: "600", marginBottom: 9, marginTop: 12 },
+  label: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 9,
+    marginTop: 12,
+  },
   input: {
-    backgroundColor: "#1D2333", color: "#FFFFFF", borderRadius: 14,
-    borderWidth: 1, borderColor: "#2B3448", paddingHorizontal: 15,
-    paddingVertical: 15, fontSize: 14,
+    backgroundColor: "#1D2333",
+    color: "#FFFFFF",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#2B3448",
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    fontSize: 14,
   },
   dica: { color: "#9AA4B2", fontSize: 12, lineHeight: 19, marginTop: 12 },
   botao: {
-    backgroundColor: "#2F80FF", borderRadius: 16, padding: 16,
-    flexDirection: "row", alignItems: "center", justifyContent: "center",
-    gap: 9, marginTop: 23,
+    backgroundColor: "#2F80FF",
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 9,
+    marginTop: 23,
   },
   botaoDesabilitado: { opacity: 0.6 },
   botaoTexto: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
   erroCard: {
-    backgroundColor: "#331D2B", borderRadius: 12, padding: 12,
-    flexDirection: "row", alignItems: "center", gap: 9, marginTop: 15,
+    backgroundColor: "#331D2B",
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+    marginTop: 15,
   },
   erroTexto: { color: "#FF9999", fontSize: 13, flex: 1 },
-  resultadoCard: { backgroundColor: "#171C2B", borderRadius: 24, padding: 20, marginTop: 22 },
-  resultadoTitulo: { color: "#FFFFFF", fontSize: 22, fontWeight: "700", marginBottom: 15 },
-  statusCard: {
-    backgroundColor: "#111B35", borderWidth: 1, borderColor: "#1F3F7A",
-    borderRadius: 16, padding: 15, flexDirection: "row", gap: 12,
-    alignItems: "center", marginBottom: 12,
+  resultadoCard: {
+    backgroundColor: "#171C2B",
+    borderRadius: 24,
+    padding: 20,
+    marginTop: 22,
   },
-  statusTexto: { color: "#FFFFFF", fontSize: 18, fontWeight: "700", marginTop: 4 },
+  resultadoTitulo: {
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 15,
+  },
+  statusCard: {
+    backgroundColor: "#111B35",
+    borderWidth: 1,
+    borderColor: "#1F3F7A",
+    borderRadius: 16,
+    padding: 15,
+    flexDirection: "row",
+    gap: 12,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  statusTexto: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+    marginTop: 4,
+  },
   valor: { color: "#AFC3E6", fontSize: 14, lineHeight: 21, marginBottom: 6 },
+
+  historicoContainer: {
+    marginTop: 26,
+    paddingTop: 22,
+    borderTopWidth: 1,
+    borderTopColor: "#2B3448",
+  },
+
+  historicoCabecalho: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 22,
+  },
+
+  historicoTitulo: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "700",
+    flex: 1,
+  },
+
+  historicoItem: {
+    marginBottom: 22,
+  },
+
+  historicoLinha: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 14,
+  },
+
+  historicoPonto: {
+    width: 11,
+    height: 11,
+    borderRadius: 6,
+    backgroundColor: "#2F80FF",
+    marginTop: 5,
+  },
+
+  historicoConteudo: {
+    flex: 1,
+  },
+
+  historicoStatus: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  historicoData: {
+    color: "#9AA4B2",
+    fontSize: 12,
+    marginTop: 5,
+  },
+
+  observacaoCard: {
+    marginTop: 12,
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: "#111B35",
+    borderWidth: 1,
+    borderColor: "#1F3F7A",
+  },
+
+  observacaoTitulo: {
+    color: "#80B3FF",
+    fontSize: 12,
+    fontWeight: "700",
+    marginBottom: 7,
+  },
+
+  observacaoTexto: {
+    color: "#DCE6F7",
+    fontSize: 13,
+    lineHeight: 21,
+  },
 });
