@@ -200,3 +200,53 @@ export async function buscarSolicitacaoPorId(
 
   return dados as SolicitacaoDetalhada;
 }
+
+
+export type AtualizacaoStatus = {
+  status: StatusSolicitacao;
+  observacao?: string;
+};
+
+export async function atualizarStatusSolicitacao(
+  token: string,
+  id: string,
+  dados: AtualizacaoStatus
+): Promise<void> {
+  let resposta: Response;
+
+  try {
+    resposta = await fetch(
+      `${API_URL}/gcm/solicitacoes/${encodeURIComponent(id)}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dados),
+      }
+    );
+  } catch {
+    throw new Error("Não foi possível conectar ao servidor.");
+  }
+
+  if (resposta.status === 401 || resposta.status === 403) {
+    throw new Error(
+      "Sua sessão expirou ou não é válida. Faça login novamente."
+    );
+  }
+
+  if (resposta.status === 404) {
+    throw new Error("Solicitação não encontrada.");
+  }
+
+  if (resposta.status === 409) {
+    throw new Error(
+      "Essa mudança de status não é permitida para a situação atual."
+    );
+  }
+
+  if (!resposta.ok) {
+    throw new Error("Não foi possível atualizar o status.");
+  }
+}
