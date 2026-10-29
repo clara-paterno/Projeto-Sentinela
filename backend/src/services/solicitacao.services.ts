@@ -86,6 +86,14 @@ export async function consultarSolicitacaoService(
         select: {
           nome: true
         }
+      },
+      historicoStatus:{
+        select: {
+          statusNovo: true,
+          observacao:true,
+          criadoEm:true
+        },
+        orderBy:{criadoEm: "asc"}
       }
     }
   });
@@ -119,7 +127,8 @@ export async function consultarSolicitacaoService(
     descricao: solicitacao.descricao,
     status: solicitacao.status,
     criadaEm: solicitacao.criadaEm,
-    atualizadaEm: solicitacao.atualizadaEm
+    atualizadaEm: solicitacao.atualizadaEm,
+    historicoStatus: solicitacao.historicoStatus
   };
 }
 
