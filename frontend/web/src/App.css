@@ -1107,3 +1107,232 @@
     gap: 12px;
   }
 }
+
+
+/* ==========================================
+   GCM — DETALHES DA SOLICITAÇÃO
+   ========================================== */
+
+.pagina-detalhes {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 48px;
+  color: #ffffff;
+}
+
+.pagina-detalhes h1 {
+  margin: 8px 0 28px;
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.detalhes-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: #8eb8ff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.detalhes-voltar:hover {
+  color: #ffffff;
+}
+
+/* Cards de informações */
+
+.detalhes-card {
+  margin-bottom: 20px;
+  padding: 26px 28px;
+  background: #171c2b;
+  border: 1px solid #2b3448;
+  border-radius: 18px;
+}
+
+.detalhes-card h2 {
+  margin: 0 0 22px;
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.detalhes-card h3 {
+  margin: 24px 0 10px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.detalhes-card p {
+  margin: 0 0 13px;
+  color: #b7c5da;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.detalhes-card p:last-child {
+  margin-bottom: 0;
+}
+
+.detalhes-card p strong {
+  color: #e7eefb;
+  font-weight: 600;
+}
+
+/* Formulário de atualização */
+
+.detalhes-card label {
+  display: block;
+  margin: 20px 0 9px;
+  color: #dce6f7;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.detalhes-card select,
+.detalhes-card textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 13px 15px;
+  background: #0b0f19;
+  border: 1px solid #34425d;
+  border-radius: 11px;
+  outline: none;
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.detalhes-card select {
+  min-height: 46px;
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+.detalhes-card textarea {
+  min-height: 115px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.detalhes-card textarea::placeholder {
+  color: #77869e;
+}
+
+.detalhes-card select:focus,
+.detalhes-card textarea:focus {
+  border-color: #2f80ff;
+  box-shadow: 0 0 0 3px rgba(47, 128, 255, 0.13);
+}
+
+.detalhes-card select:disabled,
+.detalhes-card textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botão de salvar */
+
+.detalhes-card button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  margin-top: 22px;
+  padding: 12px 24px;
+  background: #2f80ff;
+  border: 1px solid #2f80ff;
+  border-radius: 11px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.detalhes-card button:hover:not(:disabled) {
+  background: #1b6fe8;
+  transform: translateY(-1px);
+}
+
+.detalhes-card button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Mensagens de erro e sucesso */
+
+.detalhes-card [role="alert"] {
+  margin-top: 15px;
+  padding: 12px 14px;
+  background: #331d2b;
+  border: 1px solid #854155;
+  border-radius: 10px;
+  color: #ffaaaa;
+}
+
+.detalhes-card [role="status"] {
+  margin-top: 15px;
+  padding: 12px 14px;
+  background: #163628;
+  border: 1px solid #286449;
+  border-radius: 10px;
+  color: #9be7b8;
+}
+
+/* Histórico de atendimento */
+
+.detalhes-card hr {
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid #2b3448;
+}
+
+/* Responsividade */
+
+@media (max-width: 768px) {
+  .pagina-detalhes h1 {
+    font-size: 23px;
+  }
+
+  .detalhes-card {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .detalhes-card h2 {
+    font-size: 17px;
+  }
+
+  .detalhes-card button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .detalhes-card {
+    padding: 17px;
+  }
+
+  .pagina-detalhes h1 {
+    font-size: 21px;
+  }
+}
+
