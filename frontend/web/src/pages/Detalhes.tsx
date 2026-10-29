@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import "./App.css"
+import "../App.css";
+import AnexoImagem from "../components/AnexoImagem";
 import {
   buscarSolicitacaoPorId,
   atualizarStatusSolicitacao,
@@ -82,12 +83,11 @@ export default function Detalhes({ token, id, onVoltar }: DetalhesProps) {
   async function salvarAtualizacao() {
     if (!solicitacao || !novoStatus || salvando) return;
 
-    if(
-      novoStatus === "ENCERRADA_SEM_ATENDIMENTO" &&
-      !observacao.trim()
-    ) {
+    if (novoStatus === "ENCERRADA_SEM_ATENDIMENTO" && !observacao.trim()) {
       setSucesso("");
-      setErroAtualizacao("Informe uma justificativa para encerrar sem atendimento");
+      setErroAtualizacao(
+        "Informe uma justificativa para encerrar sem atendimento",
+      );
       return;
     }
 
@@ -178,6 +178,25 @@ export default function Detalhes({ token, id, onVoltar }: DetalhesProps) {
 
         <h3>Descrição</h3>
         <p>{solicitacao.descricao}</p>
+      </div>
+
+      <div className="detalhes-card">
+        <h2>Anexos da solicitação</h2>
+
+        {solicitacao.anexos.length === 0 ? (
+          <p>Nenhuma imagem anexada a esta solicitação.</p>
+        ) : (
+          <div className="detalhes-anexos">
+            {solicitacao.anexos.map((anexo) => (
+              <AnexoImagem
+                key={anexo.id}
+                id={anexo.id}
+                nome={anexo.nomeOriginal}
+                token={token}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {!solicitacao.anonima && (
@@ -276,10 +295,12 @@ export default function Detalhes({ token, id, onVoltar }: DetalhesProps) {
             <button
               type="button"
               onClick={salvarAtualizacao}
-              disabled={!novoStatus || salvando ||
-                        (novoStatus === "ENCERRADA_SEM_ATENDIMENTO" &&
-                        !observacao.trim())
-                      }
+              disabled={
+                !novoStatus ||
+                salvando ||
+                (novoStatus === "ENCERRADA_SEM_ATENDIMENTO" &&
+                  !observacao.trim())
+              }
             >
               {salvando ? "Salvando..." : "Salvar atualização"}
             </button>
@@ -321,8 +342,3 @@ export default function Detalhes({ token, id, onVoltar }: DetalhesProps) {
     </section>
   );
 }
-
-const styles = StyleSheet.create({
-
-
-})
