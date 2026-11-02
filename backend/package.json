@@ -4,9 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --env-file=.env --import tsx ./node_modules/vitest/vitest.mjs run",
-    "dev": "node --env-file=.env --import tsx --watch src/server.ts"
-  },
+  "test": "node --env-file=.env --import tsx ./node_modules/vitest/vitest.mjs run",
+  "dev": "node --env-file=.env --import tsx --watch src/server.ts",
+  "start": "node --import tsx src/server.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
