@@ -1,4 +1,5 @@
 import { View, Text } from "react-native";
+import TelefonesUteis from '../components/TelefonesUteis';
 
 export default function ConsultaScreen() {
   return (
@@ -10,9 +11,7 @@ export default function ConsultaScreen() {
         alignItems: "center",
       }}
     >
-      <Text style={{ color: "#FFFFFF", fontSize: 24 }}>
-        Ajuda funcionando
-      </Text>
+      <TelefonesUteis />
     </View>
   );
 }
